@@ -83,6 +83,7 @@ class LootTrackerPanel extends PluginPanel
 	private final JLabel backBtn = new JLabel();
 	private final JLabel singleLootBtn = new JLabel();
 	private final JLabel groupedLootBtn = new JLabel();
+	private final JLabel exportLootBtn = new JLabel();
 
 	// Log collection
 	private final List<LootTrackerRecord> records = new ArrayList<>();
@@ -131,6 +132,9 @@ class LootTrackerPanel extends PluginPanel
 		final JPanel viewControls = new JPanel(new GridLayout(1, 2, 10, 0));
 		viewControls.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 
+		final JPanel exportControls = new JPanel(new GridLayout(1, 1, 10, 0));
+		exportControls.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+
 		singleLootBtn.setIcon(SINGLE_LOOT_VIEW);
 		singleLootBtn.setToolTipText("Show each kill separately");
 		singleLootBtn.addMouseListener(new MouseAdapter()
@@ -177,9 +181,19 @@ class LootTrackerPanel extends PluginPanel
 			}
 		});
 
+		exportLootBtn.setIcon(BACK_ARROW_ICON);
+		exportLootBtn.setToolTipText("Export loot to CSV file");
+		exportLootBtn.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent mouseEvent) { System.out.println("Export"); }
+		});
+
+
 		viewControls.add(groupedLootBtn);
 		viewControls.add(singleLootBtn);
 		changeGrouping(true);
+
+		exportControls.add(exportLootBtn);
 
 		final JPanel leftTitleContainer = new JPanel(new BorderLayout(5, 0));
 		leftTitleContainer.setBackground(ColorScheme.DARKER_GRAY_COLOR);
@@ -217,6 +231,7 @@ class LootTrackerPanel extends PluginPanel
 
 		actionsContainer.add(leftTitleContainer, BorderLayout.WEST);
 		actionsContainer.add(viewControls, BorderLayout.EAST);
+		actionsContainer.add(exportControls, BorderLayout.WEST);
 
 		// Create panel that will contain overall data
 		overallPanel.setBorder(new EmptyBorder(8, 10, 8, 10));
