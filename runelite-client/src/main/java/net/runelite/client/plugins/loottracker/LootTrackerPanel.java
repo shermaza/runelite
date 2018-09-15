@@ -50,6 +50,8 @@ import net.runelite.client.ui.components.PluginErrorPanel;
 import net.runelite.client.util.ColorUtil;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.StackFormatter;
+import com.google.gson.Gson;
+
 
 class LootTrackerPanel extends PluginPanel
 {
@@ -61,6 +63,8 @@ class LootTrackerPanel extends PluginPanel
 	private static final ImageIcon GROUPED_LOOT_VIEW_HOVER;
 	private static final ImageIcon BACK_ARROW_ICON;
 	private static final ImageIcon BACK_ARROW_ICON_HOVER;
+	private static final ImageIcon EXPORT_ARROW_ICON;
+	private static final ImageIcon EXPORT_ARROW_ICON_HOVER;
 
 	private static final String HTML_LABEL_TEMPLATE =
 		"<html><body style='color:%s'>%s<span style='color:white'>%s</span></body></html>";
@@ -98,6 +102,7 @@ class LootTrackerPanel extends PluginPanel
 		final BufferedImage singleLootImg = ImageUtil.getResourceStreamFromClass(LootTrackerPlugin.class, "single_loot_icon.png");
 		final BufferedImage groupedLootImg = ImageUtil.getResourceStreamFromClass(LootTrackerPlugin.class, "grouped_loot_icon.png");
 		final BufferedImage backArrowImg = ImageUtil.getResourceStreamFromClass(LootTrackerPlugin.class, "back_icon.png");
+		final BufferedImage exportArrowImg = ImageUtil.getResourceStreamFromClass(LootTrackerPlugin.class, "export_icon.png");
 
 		SINGLE_LOOT_VIEW = new ImageIcon(singleLootImg);
 		SINGLE_LOOT_VIEW_FADED = new ImageIcon(ImageUtil.alphaOffset(singleLootImg, -180));
@@ -109,6 +114,9 @@ class LootTrackerPanel extends PluginPanel
 
 		BACK_ARROW_ICON = new ImageIcon(backArrowImg);
 		BACK_ARROW_ICON_HOVER = new ImageIcon(ImageUtil.alphaOffset(backArrowImg, -180));
+
+		EXPORT_ARROW_ICON = new ImageIcon(exportArrowImg);
+		EXPORT_ARROW_ICON_HOVER = new ImageIcon(ImageUtil.alphaOffset(exportArrowImg, -220));
 	}
 
 	LootTrackerPanel(final ItemManager itemManager)
@@ -181,19 +189,33 @@ class LootTrackerPanel extends PluginPanel
 			}
 		});
 
-		exportLootBtn.setIcon(BACK_ARROW_ICON);
-		exportLootBtn.setToolTipText("Export loot to CSV file");
-		exportLootBtn.addMouseListener(new MouseAdapter() {
+		exportLootBtn.setIcon(EXPORT_ARROW_ICON);
+		exportLootBtn.setToolTipText("Export loot to JSON file");
+		exportLootBtn.addMouseListener(new MouseAdapter()
+		{
 			@Override
-			public void mousePressed(MouseEvent mouseEvent) { System.out.println("Export"); }
+			public void mousePressed(MouseEvent mouseEvent) {
+				handleExport();
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent mouseEvent)
+			{
+				exportLootBtn.setIcon(EXPORT_ARROW_ICON_HOVER);
+			}
+
+			@Override
+			public void mouseExited(MouseEvent mouseEvent)
+			{
+				exportLootBtn.setIcon(EXPORT_ARROW_ICON);
+			}
 		});
 
 
 		viewControls.add(groupedLootBtn);
 		viewControls.add(singleLootBtn);
+		viewControls.add(exportLootBtn);
 		changeGrouping(true);
-
-		exportControls.add(exportLootBtn);
 
 		final JPanel leftTitleContainer = new JPanel(new BorderLayout(5, 0));
 		leftTitleContainer.setBackground(ColorScheme.DARKER_GRAY_COLOR);
@@ -410,5 +432,11 @@ class LootTrackerPanel extends PluginPanel
 	{
 		final String valueStr = StackFormatter.quantityToStackSize(value);
 		return String.format(HTML_LABEL_TEMPLATE, ColorUtil.toHexColor(ColorScheme.LIGHT_GRAY_COLOR), key, valueStr);
+	}
+
+	private void handleExport() {
+		System.out.println("Export");
+		String json = new Gson().toJson(this.records);
+		System.out.println(json);
 	}
 }

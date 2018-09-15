@@ -267,4 +267,5 @@ public class LootTrackerPlugin extends Plugin
 				price);
 		}).toArray(LootTrackerItem[]::new);
 	}
+
 }
